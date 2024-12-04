@@ -1,0 +1,54 @@
+.main-page {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-image: url("../../Image/back.png");
+    /* Replace with the correct image path */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    text-align: center;
+    color: #4a4a4a;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    font-size: 3em;
+    margin: 0;
+    font-weight: bold;
+}
+
+h2 {
+    margin-top: 10px;
+    font-size: 1.5em;
+    color: #6a6a6a;
+}
+
+.menu-button {
+    margin-top: 20px;
+    background-color: #d1b07d;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.menu-button:hover {
+    background-color: #b28c60;
+}
+
+.menu-button a {
+    text-decoration: none;
+    color: inherit;
+}
