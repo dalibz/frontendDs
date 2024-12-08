@@ -8,7 +8,7 @@ const Listarticlescard = () => {
     const[isLoading,setisLoading]=useState(true)
     const fetcharticles = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/articles");
+        const res = await axios.get("http://localhost:8000/api/products");
         setArticles(res.data);
         setisLoading(false)
   

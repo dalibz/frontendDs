@@ -9,7 +9,7 @@ const Editscategorie = () => {
 
   const fetchScategorie = async () => {
     try {
-      const res = await axios.get(`https://yourbackendurl/api/scategories/${id}`);
+      const res = await axios.get(`http://localhost:8000/api/s_categories/${id}`);
       setScategorie(res.data);
     } catch (error) {
       console.log(error);
@@ -23,7 +23,7 @@ const Editscategorie = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`https://yourbackendurl/api/scategories/${id}`, scategorie);
+      await axios.put(`http://localhost:8000/api/s_categories/${id}`, scategorie);
       navigate("/scategories");
     } catch (error) {
       console.log(error);
@@ -39,19 +39,28 @@ const Editscategorie = () => {
           <input
             type="text"
             className="form-control"
-            value={scategorie.name}
-            onChange={(e) => setScategorie({ ...scategorie, name: e.target.value })}
+            value={scategorie.SCategoryName}
+            onChange={(e) =>
+              setScategorie({ ...scategorie, SCategoryName: e.target.value })
+            }
           />
         </div>
         <div className="form-group">
-          <label>Description</label>
-          <textarea
-            className="form-control"
-            value={scategorie.description}
+          <label htmlFor="image">Image</label>
+          <input
+            type="text"
+            required
+            id="SCategoryImage"
+            value={scategorie.SCategoryImage}
             onChange={(e) =>
-              setScategorie({ ...scategorie, description: e.target.value })
+              setScategorie({ ...scategorie, SCategoryImage: e.target.value })
             }
-          ></textarea>
+            className="form-input"
+            placeholder="Image"
+          />
+          {scategorie.SCategoryImage ? (
+            <img src={scategorie.SCategoryImage} alt="image" width="70" />
+          ) : null}
         </div>
         <button type="submit" className="btn btn-success mt-2">
           Save

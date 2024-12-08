@@ -6,10 +6,10 @@ const MainPage = () => {
   return (
     <div className="main-page">
       <div className="container">
-        <h1>THE BUZZ</h1>
-        <h2>LOUNGE</h2>
+        <h1>OUR</h1>
+        <h2>Coffee Shop</h2>
         <button className="menu-button">
-          <Link to="/categories">Voir Le Menu</Link>
+          <Link to="/menu">Voir Le Menu</Link>
         </button>
       </div>
     </div>

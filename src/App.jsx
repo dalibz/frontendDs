@@ -16,7 +16,6 @@ const Viewcategorie = React.lazy(() => import('./components/categories/Viewcateg
 const Listscategories = React.lazy(() => import('./components/scategories/Listscategories'));
 const Insertscategorie = React.lazy(() => import('./components/scategories/Insertscategorie'));
 const Editscategorie = React.lazy(() => import('./components/scategories/Editscategorie'));
-const Viewscategorie = React.lazy(() => import('./components/scategories/Viewscategorie'));
 const Listarticlescard = React.lazy(() => import('./components/articles/Listarticlescard'));
 
 function App() {
@@ -48,7 +47,6 @@ function App() {
           <Route path="/scategories" element={<Listscategories />} />
           <Route path="/scategories/add" element={<Insertscategorie />} />
           <Route path="/scategories/edit/:id" element={<Editscategorie />} />
-          <Route path="/scategories/view/:id" element={<Viewscategorie />} />
 
           {/* 404 Page */}
           <Route path="*" element={<h1>404 - Page Not Found</h1>} />

@@ -28,7 +28,7 @@ const Affichecategories = ({ categories, setCategories }) => {
   };
 
   // Définir les colonnes du tableau
-  const columns = useMemo(() => [
+  const columns  = [
     {
       accessorKey: 'category_image',
       header: 'Image',
@@ -49,6 +49,11 @@ const Affichecategories = ({ categories, setCategories }) => {
     {
       accessorKey: 'category_name',
       header: 'Nom Catégorie',
+      size: 100,
+    },
+    {
+      accessorKey: 'description',
+      header: 'Description Catégorie',
       size: 100,
     },
     {
@@ -77,7 +82,7 @@ const Affichecategories = ({ categories, setCategories }) => {
         </div>
       ),
     },
-  ], [categories, loading]);
+  ];
 
   // Utilisation de la table de Material React Table
   const table = useMaterialReactTable({

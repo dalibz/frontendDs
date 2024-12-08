@@ -1,74 +1,42 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
+import Affichescategories from "./Affichescategories";
 
 const Listscategories = () => {
-  const [scategories, setScategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [scategories, setScategories] = useState([]); // État pour stocker la liste des catégories
 
-  const fetchScategories = async () => {
+  // Fonction pour récupérer les catégories depuis le serveur
+  const getscategories = async () => {
     try {
-      const res = await axios.get("https://yourbackendurl/api/scategories");
-      setScategories(res.data);
-      setIsLoading(false);
+      const res = await axios.get("http://localhost:8000/api/s_categories");
+      setScategories(res.data); // Met à jour l'état avec les catégories récupérées
     } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this sous catégorie?")) {
-      try {
-        await axios.delete(`https://yourbackendurl/api/scategories/${id}`);
-        setScategories(scategories.filter((scat) => scat.id !== id));
-      } catch (error) {
-        console.log(error);
-      }
+      console.log(error); // En cas d'erreur, l'afficher dans la console
     }
   };
 
   useEffect(() => {
-    fetchScategories();
+    getscategories(); // Charge les catégories au premier rendu du composant
   }, []);
-
-  if (isLoading) {
-    return <h3>Loading...</h3>;
-  }
 
   return (
     <div>
-      <h1>List of Sous Catégories</h1>
-      <Link to="/scategories/add" className="btn btn-primary">
-        Add Sous Catégorie
-      </Link>
-      <table className="table table-striped mt-3">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {scategories.map((scat) => (
-            <tr key={scat.id}>
-              <td>{scat.name}</td>
-              <td>{scat.description}</td>
-              <td>
-                <Link to={`/scategories/edit/${scat.id}`} className="btn btn-warning btn-sm">
-                  Edit
-                </Link>{" "}
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleDelete(scat.id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Button variant="contained" style={{ backgroundColor: "black" }}>
+        <Link
+          to="/scategories/add"
+          style={{ color: "white", textDecoration: "none" }}
+        >
+          <i className="fa-solid fa-plus-square"></i> Nouveau
+        </Link>
+      </Button>
+      <h2>Liste des catégories</h2>
+      {/* Affiche les catégories en utilisant le composant Affichecategories */}
+      <Affichescategories
+        scategories={scategories}
+        setScategories={setScategories}
+      />
     </div>
   );
 };

@@ -17,7 +17,7 @@ const Insertcategorie = () => {
       return;
     }
     try {
-      console.log(categorie)
+      console.log(categorie)  
       await axios.post("http://localhost:8000/api/categories", categorie); // Envoi de la catégorie au serveur
       navigate("/categories"); // Redirige vers la liste des catégories après ajout
     } catch (error) {
@@ -42,7 +42,17 @@ const Insertcategorie = () => {
             placeholder="Entrez nom catégorie"
           />
         </div>
-
+  <div className="form-group">
+          <label htmlFor="Nom">Description catégorie</label>
+          <input
+            type="text"
+            id="reference"
+            value={categorie.description}
+            onChange={(e) => setCategorie({ ...categorie, description: e.target.value })}
+            className="form-input"
+            placeholder="Entrez nom catégorie"
+          />
+        </div>
         <div className="form-group">
           <label htmlFor="image">Image</label>
           <input

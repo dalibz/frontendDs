@@ -1,172 +1,184 @@
-import { Form, Col,Row } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link ,useNavigate,useParams} from 'react-router-dom';
-import { FilePond,registerPlugin } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
-import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation' 
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
+import { Form, Col, Row } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { FilePond, registerPlugin } from "react-filepond";
+import "filepond/dist/filepond.min.css";
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+
 const Editarticle = () => {
-  const [article, setArticle] = useState([]);
+  const [article, setArticle] = useState({
+    ProductName: "",
+    Description: "",
+    Price: "",
+    Stock: "",
+    SCategoryID: "",
+  });
   const [scategories, setScategories] = useState([]);
   const [files, setFiles] = useState([]);
-  const{id}=useParams()
-  const loadarticle=async()=>{
-    await axios.get(`http://localhost:8000/api/articles/${id}`)
-    .then(res=>{setArticle(res.data)})
-  }
-  const navigate=useNavigate();
-  const fetchscategories=async()=>{
-    try{
-      const res= await axios.get("http://localhost:8000/api/scategorie")
-      setScategories(res.data)
-    }
-    catch(error){
-      console.log(error)
-    }
-  }
-  const handleSave=async(e)=>{
-    try{
-      e.preventDefault();
-      await axios.put(`http://localhost:8000/api/articles/${id}`,article)
-      .then(()=>{navigate("/articles")
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-      })
-    }catch(error){
-      console.log(error)
-    }
-  }
-  const serverOptions = () => { ;
-    return {
-    process: (fieldName, file, metadata, load, error, progress, abort) => {
-    console.log(file)
-    const data = new FormData();
-    data.append('file', file);
-    data.append('upload_preset', 'ecommerce');
-    data.append('cloud_name', 'drh34ulo7');
-        data.append('publicid', file.name);
-        axios.post('https://api.cloudinary.com/v1_1/drh34ulo7/image/upload', data)
-        .then((response) => response.data)
-        .then((data) => {
-        console.log(data);
-        setArticle({...article,imageart:data.url}) ;
-        load(data);
-        })
-        .catch((error) => {
-        console.error('Error uploading file:', error);
-        error('Upload failed');
-        abort();
-        });
+  const loadArticle = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/products/${id}`);
+      const { ProductName, Description, Price, Stock, SCategoryID, imageart } =
+        res.data;
+      setArticle({ ProductName, Description, Price, Stock, SCategoryID });
+      setFiles([
+        {
+          source: imageart,
+          options: { type: "local" },
         },
-        };
-        };
+      ]);
+    } catch (error) {
+      console.log("Error loading article:", error);
+    }
+  };
 
-  useEffect(()=>{
-    fetchscategories()
-    loadarticle()
-    setFiles([
-      {
-        source: article.imageart,
-        options:{type : 'local'}
+  const fetchScategories = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/s_categories");
+      setScategories(res.data);
+    } catch (error) {
+      console.log("Error fetching subcategories:", error);
+    }
+  };
 
-      }
-    ])
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:8000/api/products/${id}`, article);
+      navigate("/articles");
+    } catch (error) {
+      console.log("Error saving article:", error);
+    }
+  };
 
-  },[])
+  const serverOptions = () => {
+    return {
+      process: (fieldName, file, metadata, load, error, progress, abort) => {
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "ecommerce");
+        data.append("cloud_name", "drh34ulo7");
+        axios
+          .post("https://api.cloudinary.com/v1_1/drh34ulo7/image/upload", data)
+          .then((response) => response.data)
+          .then((data) => {
+            setArticle({ ...article, imageart: data.url });
+            load(data);
+          })
+          .catch((uploadError) => {
+            console.error("Error uploading file:", uploadError);
+            error("Upload failed");
+            abort();
+          });
+      },
+    };
+  };
+
+  useEffect(() => {
+    fetchScategories();
+    loadArticle();
+  }, []);
+
   return (
-    <div className='col-md-6 offset-md-3 border rounded p-4 mt-2 shdow'>
-
+    <div className="col-md-6 offset-md-3 border rounded p-4 mt-2 shadow">
       <div className="text-center">
         <h2>Modifier un article</h2>
       </div>
 
-    <Form>
-      <Row className="mb-2">
-      <Form.Group as={Col} md="6">
-        <Form.Label>Réference</Form.Label>
-        <Form.Control type="text" placeholder="Réference" 
-         value={article.reference}
-         onChange={(e)=>setArticle({...article,reference:e.target.value})}
-         />
-      </Form.Group>
-      <Form.Group as={Col} md="6">
-        <Form.Label>Désignation</Form.Label>
-        <Form.Control type="text" placeholder="Désignation" 
-         value={article.designation}
-         onChange={(e)=>setArticle({...article,designation:e.target.value})}
-         />
-      
-      </Form.Group>
-      </Row>
-      <Row className="mb-2">
-      <Form.Group as={Col} md="6">
-        <Form.Label>Marque</Form.Label>
-        <Form.Control type="text" placeholder="Marque" 
-         value={article.marque}
-         onChange={(e)=>setArticle({...article,marque:e.target.value})}
-         />
-      </Form.Group>
-      <Form.Group as={Col} md="6">
-        <Form.Label>Stock</Form.Label>
-        <Form.Control type="number" placeholder="Stock" 
-         value={article.qtestock}
-         onChange={(e)=>setArticle({...article,qtestock:e.target.value})}
-         />
-      </Form.Group>
-      </Row>
-      <Row className="mb-2">
-      <Form.Group as={Col} md="6">
-        <Form.Label>Prix</Form.Label>
-        <Form.Control type="number" placeholder="Prix" 
-         value={article.prix}
-         onChange={(e)=>setArticle({...article,prix:e.target.value})}
-         />
-      </Form.Group>
-      <div className="form-group">
-        <label htmlFor="prix">Image</label>
-        <div style={{ width: "80%", margin: "auto", padding: "1%" }}>
-        <FilePond
-        files={files}
-        acceptedFileTypes="image/*"
-        onupdatefiles={setFiles}
-        allowMultiple={true}
-        server={serverOptions()}
-        name="file"
-        />
+      <Form>
+        <Row className="mb-2">
+          <Form.Group as={Col} md="6">
+            <Form.Label>Nom</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nom"
+              value={article.ProductName}
+              onChange={(e) =>
+                setArticle({ ...article, ProductName: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group as={Col} md="6">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Description"
+              value={article.Description}
+              onChange={(e) =>
+                setArticle({ ...article, Description: e.target.value })
+              }
+            />
+          </Form.Group>
+        </Row>
+        <Row className="mb-2">
+          <Form.Group as={Col} md="6">
+            <Form.Label>Prix</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Prix"
+              value={article.Price}
+              onChange={(e) =>
+                setArticle({ ...article, Price: e.target.value })
+              }
+            />
+          </Form.Group>
+          <Form.Group as={Col} md="6">
+            <Form.Label>Stock</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Stock"
+              value={article.Stock}
+              onChange={(e) =>
+                setArticle({ ...article, Stock: e.target.value })
+              }
+            />
+          </Form.Group>
+        </Row>
+        <Row className="mb-2">
+          <Form.Group as={Col} md="6">
+            <Form.Label>Sous Categorie</Form.Label>
+            <Form.Control
+              as="select"
+              placeholder="Sous Categorie"
+              value={article.SCategoryID}
+              onChange={(e) =>
+                setArticle({ ...article, SCategoryID: e.target.value })
+              }
+            >
+              {scategories.map((scat) => (
+                <option key={scat.id} value={scat.id}>
+                  {scat.SCategoryName}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+         
+        </Row>
+        <div className="d-flex justify-content-end">
+          <button
+            className="btn btn-success btn-sm"
+            onClick={(e) => handleSave(e)}
+          >
+            Enregistrer
+          </button>
+          &nbsp;&nbsp;
+          <Link to="/articles">
+            <button className="btn btn-warning btn-sm">
+              <i className="fa-solid fa-left-long"></i> Annuler
+            </button>
+          </Link>
         </div>
-        </div>
-      </Row>
-      <Row className="mb-2">
-    <Form.Group as={Col} md="6">
-    <Form.Label>Sous Categorie</Form.Label>
-    <Form.Control
-        as="select"
-        placeholder="Sous Categorie"
-        value={article.scategorieID}
-        onChange={(e) => setArticle({ ...article, scategorieID: e.target.value })}
-    >
-        {scategories.map((scat) => (
-            <option key={scat.id} value={scat.id}>{scat.nomscategorie}</option>
-        ))}
-    </Form.Control>
-      </Form.Group>
-
-      </Row>
-      <div className='d-flex justify-content-end'>
-
-      <button className="btn btn-success btn-sm" onClick={(e)=>handleSave(e)}> Enregistrer</button>
-      &nbsp;&nbsp;
-      <Link to="/articles">
-      <button className="btn btn-warning btn-sm">
-      <i className="fa-solid fa-left-long"></i>
-       Annuler</button>
-      </Link>
-      </div>
-    </Form>
+      </Form>
     </div>
-  )
-}
+  );
+};
 
 export default Editarticle;
